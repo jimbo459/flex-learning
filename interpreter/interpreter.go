@@ -70,6 +70,11 @@ type MoreThan struct {
 	right Expr
 }
 
+type EqualTo struct {
+	left Expr
+	right Expr
+}
+
 type Expr interface {
 	Eval(Store) Value
 }
@@ -111,8 +116,12 @@ func (p LessThan) Eval(s Store) Value {
 	return Value{MyBool,-1, p.left.Eval(s).IntVal < p.right.Eval(s).IntVal}
 }
 
-func (p MoreThan) Eval(s Store) Value {
-	return Value{MyBool,-1, p.left.Eval(s).IntVal > p.right.Eval(s).IntVal}
+func (mo MoreThan) Eval(s Store) Value {
+	return Value{MyBool,-1, mo.left.Eval(s).IntVal > mo.right.Eval(s).IntVal}
+}
+
+func (eq EqualTo) Eval(s Store) Value {
+	return Value{MyBool,-1, eq.left.Eval(s).IntVal == eq.right.Eval(s).IntVal}
 }
 
 func (v Variable) Eval(s Store) Value {
