@@ -177,3 +177,6 @@ func evalE(e Expr, s Store) Value {
 func Run(p Program, s Store) Store {
 	return p.Run(s)
 }
+
+/// TODO: Implement for loop
+/// TODO: Implement Case statement
