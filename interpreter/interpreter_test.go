@@ -44,13 +44,22 @@ var _ = Describe("Interpreter", func() {
 		})
 	})
 
-	Context("Run called with Conditional (if x == y then x := 1 else x := 0)", func() {
+	Context("Run called with Conditional (if x == y then x := 5 else x := 4)", func() {
 		It("Should return a Store with x:4", func() {
 			Expect(Run(Conditional{
 				EqualTo{Variable{"x"}, Variable{"y"}},
 				Assignment{"x", Const{Value{MyInt,5, false}}},
 				Assignment{"y", Const{Value{MyInt,5, false}}}},
 				Store{map[string]int{"x":4, "y":4}})).To(Equal(Store{innerMap: map[string]int{"y": 4, "x": 5}}))
+		})
+	})
+
+	Context("While called with Conditional (if x < 5 then x++) ", func() {
+		It("Should return a Store with x:5", func() {
+			Expect(Run(While{LessThan{Variable{"x"}, Const{Value{MyInt, 5, false}}},
+				Assignment{"x", Plus{Variable{"x"},
+					Const{Value{MyInt, 1, false}}}}},
+					Store{map[string]int{"x":0}})).To(Equal(Store{innerMap: map[string]int{"x": 5}}))
 		})
 	})
 

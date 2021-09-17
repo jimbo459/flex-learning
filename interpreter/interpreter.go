@@ -75,6 +75,11 @@ type EqualTo struct {
 	right Expr
 }
 
+type NotEqualTo struct {
+	left Expr
+	right Expr
+}
+
 type Expr interface {
 	Eval(Store) Value
 }
@@ -124,6 +129,10 @@ func (eq EqualTo) Eval(s Store) Value {
 	return Value{MyBool,-1, eq.left.Eval(s).IntVal == eq.right.Eval(s).IntVal}
 }
 
+func (neq NotEqualTo) Eval(s Store) Value {
+	return Value{MyBool,-1, neq.left.Eval(s).IntVal != neq.right.Eval(s).IntVal}
+}
+
 func (v Variable) Eval(s Store) Value {
 	return Value{MyInt,s.Read(v.name),false }
 }
@@ -151,12 +160,15 @@ func (c Conditional) Run(s Store) Store {
 	return Store{}
 }
 
-//func (w While) Run(s Store) Store {
-//	if w.condition.Eval(s) == 1 {
-//		w.do.Run(s)
-//	}
-//	return s
-//}
+func (w While) Run(s Store) Store {
+	var localStore = s
+
+	if w.condition.Eval(s).BoolVal {
+		localStore = w.Run(w.do.Run(s))
+	}
+
+	return localStore
+}
 
 func evalE(e Expr, s Store) Value {
 	return e.Eval(s)
